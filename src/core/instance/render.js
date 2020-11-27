@@ -66,6 +66,7 @@ export function renderMixin (Vue: Class<Component>) {
     return nextTick(fn, this)
   }
 
+  // ! 生成vNode，并返回
   Vue.prototype._render = function (): VNode {
     const vm: Component = this
     const { render, _parentVnode } = vm.$options
@@ -80,6 +81,7 @@ export function renderMixin (Vue: Class<Component>) {
 
     // set parent vnode. this allows render functions to have access
     // to the data on the placeholder node.
+    // ! 设置Vue实例的父vNode节点，首次初始化渲染则为undefined
     vm.$vnode = _parentVnode
     // render self
     let vnode

@@ -10,6 +10,7 @@ let uid = 0
  * A dep is an observable that can have multiple
  * directives subscribing to it.
  */
+// 发布者
 export default class Dep {
   static target: ?Watcher;
   id: number;
@@ -55,12 +56,15 @@ export default class Dep {
 Dep.target = null
 const targetStack = []
 
+// 父子组件渲染时需要利用栈的特性来保存上一级的target
 export function pushTarget (target: ?Watcher) {
+  // targetStack = [父,子]
   targetStack.push(target)
   Dep.target = target
 }
 
 export function popTarget () {
-  targetStack.pop()
+  targetStack.pop() // pop出去子组件
+  // targetStack = [父]
   Dep.target = targetStack[targetStack.length - 1]
 }

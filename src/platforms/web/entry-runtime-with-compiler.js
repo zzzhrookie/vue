@@ -14,6 +14,7 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+// 函数劫持： 缓存原先原型上的$mount方法
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -31,9 +32,12 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+
+  // 获取渲染函数 render > template > el
   if (!options.render) {
     let template = options.template
     if (template) {
+      // ! template如果存在，则template必须为string类型或者node元素
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {
           template = idToTemplate(template)
@@ -62,6 +66,7 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      // 编译： 获取渲染函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,

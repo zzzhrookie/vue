@@ -144,6 +144,7 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // ! 是否是以_和$开头的变量，如果是，则为Vue内部变量，不进行代理
       proxy(vm, `_data`, key)
     }
   }

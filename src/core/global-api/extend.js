@@ -30,6 +30,7 @@ export function initExtend (Vue: GlobalAPI) {
       validateComponentName(name)
     }
 
+    // ! 构建一个Vue子类
     const Sub = function VueComponent (options) {
       this._init(options)
     }

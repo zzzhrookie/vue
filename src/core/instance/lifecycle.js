@@ -64,10 +64,13 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    // ! 没有之前vNode，则直接覆盖挂载
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
+      // ! 之前有vNode，则比较前后两个vNode树，进行diff
+      // ! **diff算法核心**
       // updates
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
@@ -143,6 +146,7 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
+  // ! vm.$el 是Vue实例的挂载目标的DOM对象
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode
@@ -187,6 +191,8 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // ! vm._render 把模板和数据生成一个Virtual DOM 树
+      // ! vm._update中实现把Virtual DOM 树渲染成 真实 DOM 树
       vm._update(vm._render(), hydrating)
     }
   }
@@ -194,6 +200,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // ! 渲染Watcher（RenderWatcher）
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

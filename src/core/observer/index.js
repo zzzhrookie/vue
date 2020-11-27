@@ -41,10 +41,13 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // 为对象或者数组服务的，挂在数据的__ob__属性上
     this.dep = new Dep()
     this.vmCount = 0
+    // ! def是定义的函数，使用defineProperty给value添加不可枚举属性,__ob__是一个对象被observe的标志
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
+      // 如果是数组，走原型覆盖
       if (hasProto) {
         protoAugment(value, arrayMethods)
       } else {
@@ -52,6 +55,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      // 如果是对象，遍历处理
       this.walk(value)
     }
   }
@@ -107,6 +111,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
+// 执行过程中，出现一个对象，就会创建一个Observer实例
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
     return
@@ -139,6 +144,8 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // ! 实例化一个Dep，这个Dep存在于下面的get和set函数的作用域中（闭包用法），用于收集订阅数据更新的Watcher，
+  // ! 这里一个Dep与一个属性（即参数里的key）相对应，一个Dep可以有多个订阅者
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -154,13 +161,17 @@ export function defineReactive (
   }
 
   let childOb = !shallow && observe(val)
+  // defineReactive(obj, 'foo', 'hello')
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
+      // ! 这里是Dep收集订阅者的过程，只有在Dep.target存在的情况下才进行这个操作，在Watcher收集依赖的时候才会设置         Dep.target，所以Watcher收集依赖的时机就是Dep收集订阅者的时机。
       if (Dep.target) {
         dep.depend()
+        // ! 注意这里,不仅这个属性需要添加到依赖列表中，如果这个属性对应的值是对象或数组，那么这个属性对应的值也需要添加到依赖列表中
+        // vm.$set/Vue.set和vm.$delete/Vue.delete等操作，手动调用dep.notify()方法来更新
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {

@@ -27,8 +27,8 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 
 // install platform runtime directives & components
-extend(Vue.options.directives, platformDirectives)
-extend(Vue.options.components, platformComponents)
+extend(Vue.options.directives, platformDirectives) // 安装Transition, TransitionGroup组件
+extend(Vue.options.components, platformComponents) // 安装model, show指令
 
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
@@ -39,6 +39,7 @@ Vue.prototype.$mount = function (
   hydrating?: boolean
 ): Component {
   el = el && inBrowser ? query(el) : undefined
+  // 挂载执行 mountComponent
   return mountComponent(this, el, hydrating)
 }
 

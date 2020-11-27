@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="example">
+  <my-component></my-component>
+  <my-component></my-component>
+
+  </div>
+</body>
+</html>
+<script src="../../dist/vue.js"></script>
+<script>
+  var data = {counter: 1, foo: {baz: 'hello'}}
+  Vue.component('my-component', {
+    template: '<div>{{ counter }}</div>',
+    data: function () {
+      return data
+    },
+    mounted () {
+      this.$set(this.foo, 'zoo', 'Vue');
+    },
+  })
+
+  
+
+  // 创建根实例
+  var app2 = new Vue({
+    el: '#example'
+  })
+
+
+
+  /**
+   * ƒ anonymous() {
+        with(this){ 
+          return _c('div',{ attrs:{"id":"example"} },
+          [_c('my-component'),_v(" "),_c('my-component')],1)}
+     }
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+  */
+</script>

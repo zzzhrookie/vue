@@ -23,6 +23,7 @@ let uid = 0
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
  */
+// 订阅者
 export default class Watcher {
   vm: Component;
   expression: string;
@@ -50,14 +51,15 @@ export default class Watcher {
     isRenderWatcher?: boolean
   ) {
     this.vm = vm
+    // Vue中watcher分类： render Watcher / computed Watcher / user Watcher
     if (isRenderWatcher) {
       vm._watcher = this
     }
     vm._watchers.push(this)
     // options
     if (options) {
-      this.deep = !!options.deep
-      this.user = !!options.user
+      this.deep = !!options.deep // user Watcher
+      this.user = !!options.user // user Watcher => this.user = true
       this.lazy = !!options.lazy
       this.sync = !!options.sync
       this.before = options.before
@@ -69,7 +71,7 @@ export default class Watcher {
     this.active = true
     this.dirty = this.lazy // for lazy watchers
     this.deps = []
-    this.newDeps = []
+    this.newDeps = [] //
     this.depIds = new Set()
     this.newDepIds = new Set()
     this.expression = process.env.NODE_ENV !== 'production'
@@ -131,6 +133,7 @@ export default class Watcher {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
       if (!this.depIds.has(id)) {
+        // 这里的this为Dep.target
         dep.addSub(this)
       }
     }
@@ -147,6 +150,7 @@ export default class Watcher {
         dep.removeSub(this)
       }
     }
+
     let tmp = this.depIds
     this.depIds = this.newDepIds
     this.newDepIds = tmp

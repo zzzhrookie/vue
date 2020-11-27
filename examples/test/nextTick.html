@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2 ref="msg">{{foo.msg}}</h2>
+
+    <button @click="update">update</button>
+  </div>
+</body>
+</html>
+<script src="../../dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: 'Hello World',
+      foo: {
+        msg: {
+          log: 'typescript'
+        }
+      }
+    },
+    methods: {
+      update() {
+        // debugger
+        // this.message = 'Hello 01'
+        // this.message = 'Hello 02'
+        // this.$nextTick(() => {
+        //   console.log(this.$refs.msg.innerHTML)
+        // })
+        // this.message = 'Hello 03'
+        // this.message = 'Hello 04'
+        
+        // console.log(this.$refs.msg.innerHTML)
+        this.$set(this.foo.msg, 'baz', 'react')
+      }
+    },
+  })
+</script>
